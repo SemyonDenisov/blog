@@ -6,6 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 
+
 @Getter
 @AllArgsConstructor
 public class Post {
@@ -14,6 +15,8 @@ public class Post {
     private String text;
     private String imageUrl;
     private int likes;
+    private List<String> tags;
+
 
     public int getLikesCount() {
         return likes;
