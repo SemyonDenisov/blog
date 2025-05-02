@@ -13,4 +13,6 @@ public interface PostService {
     void deleteById(int id);
     Post findById(int id);
     void like(int id,boolean decision);
+    void edit(Post post);
 }
+

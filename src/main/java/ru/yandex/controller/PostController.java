@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.model.Post;
 import ru.yandex.service.post.PostService;
 
-import javax.swing.text.Document;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/posts")
@@ -28,28 +28,34 @@ public class PostController {
 
     @PostMapping
     @RequestMapping("/{id}/like")
-    public String likePost(@PathVariable(name="id") Integer id,@RequestParam Boolean like, Model model) {
-        postService.like(id, like);
+    public String likePost(Model model,@PathVariable(name="id") Integer id,@RequestParam Map<String, Object>  like) {
+        postService.like(id, Boolean.parseBoolean(like.get("like").toString()));
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
 
     @GetMapping
     @RequestMapping("/{id}")
-    public String getPost(@PathVariable(name = "id") Integer id, Model model) {
+    public String getPost(Model model,@PathVariable(name = "id") Integer id) {
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
 
-    @PostMapping(value = "/{id}", params = "_method=delete")
+    @PostMapping(value = "/{id}/delete")
     public String delete(@PathVariable(name = "id") Integer id) {
         postService.deleteById(id);
         return "redirect:/posts";
     }
+    @GetMapping(value = "/{id}/edit")
+    public String edit(Model model,@PathVariable(name = "id") Integer id) {
+        model.addAttribute("post",postService.findById(id));
+        return "add-post";
+    }
+
 
     @GetMapping
     @RequestMapping("/add")
-    public String save(@ModelAttribute Post post) {
+    public String save() {
         return "add-post";
     }
 
