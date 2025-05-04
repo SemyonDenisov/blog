@@ -21,4 +21,7 @@ public interface PostRepository {
     void createComment(int postId, String text);
 
     void deleteCommentById(int commentId);
+
+    List<Post> findAllByTag(String tag);
 }
+

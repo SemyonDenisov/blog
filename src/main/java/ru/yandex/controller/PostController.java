@@ -41,8 +41,13 @@ public class PostController {
     }
 
     @GetMapping
-    public String posts(Model model) {
-        List<Post> posts = postService.findAll();
+    public String posts(Model model, @RequestParam(name = "search",defaultValue = "") String search) {
+        List<Post> posts;
+        if (search.isEmpty()) {
+            posts = postService.findAll();
+        } else {
+            posts = postService.findAllByTag(search.trim());
+        }
         model.addAttribute("posts", posts);
         return "posts";
     }

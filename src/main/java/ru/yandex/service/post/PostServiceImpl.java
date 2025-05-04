@@ -72,4 +72,9 @@ public class PostServiceImpl implements PostService {
                 }
         );
     }
+
+    @Override
+    public List<Post> findAllByTag(String tag) {
+        return postRepository.findAllByTag(tag);
+    }
 }

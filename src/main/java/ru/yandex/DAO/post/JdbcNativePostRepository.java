@@ -126,4 +126,19 @@ public class JdbcNativePostRepository implements PostRepository {
         jdbcTemplate.update("delete from posts_comments where comment_id = ?", commentId);
     }
 
+    @Override
+    public List<Post> findAllByTag(String tag) {
+        return jdbcTemplate.query("select posts.id, title, text, imageUrl,likes from posts join posts_tags on posts.id = posts_tags.post_id join tags on tag_id=tags.id where tags.tag=?",
+                new Object[]{tag},
+                (rs, rowNum) -> new Post(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("text"),
+                        rs.getString("imageUrl"),
+                        rs.getInt("likes"),
+                        getTagsByPostId(rs.getInt("id")),
+                        getCommentsByPostId(rs.getInt("id"))
+                ));
+    }
+
 }

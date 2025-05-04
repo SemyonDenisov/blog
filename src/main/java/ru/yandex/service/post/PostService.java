@@ -24,4 +24,5 @@ public interface PostService {
     void deleteComment(int commentId);
 
     void editPost(Post post);
+    List<Post> findAllByTag(String tag);
 }
