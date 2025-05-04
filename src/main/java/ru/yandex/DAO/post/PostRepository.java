@@ -7,8 +7,18 @@ import java.util.Optional;
 
 public interface PostRepository {
     List<Post> findAll();
+
     void save(Post post);
+
     void deleteById(int id);
+
     Optional<Post> findById(int id);
-    void updateLikesCount(int id,boolean decision);
+
+    void updateLikesCount(int id, boolean decision);
+
+    void editComment(int commentId, String text);
+
+    void createComment(int postId, String text);
+
+    void deleteCommentById(int commentId);
 }

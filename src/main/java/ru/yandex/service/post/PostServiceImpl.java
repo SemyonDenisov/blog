@@ -39,8 +39,23 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void edit(Post post) {
+    public void editPost(Post post) {
 
+    }
+
+    @Override
+    public void editComment(int commentId, String text) {
+        postRepository.editComment(commentId, text);
+    }
+
+    @Override
+    public void createComment(int postId, String text) {
+        postRepository.createComment(postId, text);
+    }
+
+    @Override
+    public void deleteComment(int commentId) {
+        postRepository.deleteCommentById(commentId);
     }
 
     @Override
@@ -49,13 +64,11 @@ public class PostServiceImpl implements PostService {
                 post -> {
                     if (decision) {
                         postRepository.updateLikesCount(id,true);
-                    } else {
+                    } else if(post.getLikes()>0) {
                         postRepository.updateLikesCount(id,false);
-
                     }
                 },
                 () -> {
-                    return;
                 }
         );
     }

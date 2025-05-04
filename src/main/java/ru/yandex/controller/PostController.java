@@ -22,20 +22,20 @@ public class PostController {
 
 
     @PostMapping(value = "/{id}")
-    public String editPost(Model model,@PathVariable(name = "id") Integer id,@RequestParam(name="post") PostDTO postDTO) {
+    public String editPost(Model model, @PathVariable(name = "id") Integer id, @RequestParam(name = "post") PostDTO postDTO) {
         System.out.println(postDTO);
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
 
     @GetMapping(value = "/{id}")
-    public String getPost(Model model,@PathVariable(name = "id") Integer id) {
+    public String getPost(Model model, @PathVariable(name = "id") Integer id) {
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
 
     @PostMapping
-    public String postPost(@RequestParam(name="post") PostDTO postDTO, Model model) {
+    public String postPost(@RequestParam(name = "post") PostDTO postDTO) {
         postService.save(postMapper.mapToPost(postDTO));
         return "redirect:/posts";
     }
@@ -49,14 +49,36 @@ public class PostController {
 
     @PostMapping
     @RequestMapping("/{id}/like")
-    public String likePost(Model model,@PathVariable(name="id") Integer id,@RequestParam Map<String, Object>  like) {
+    public String likePost(Model model, @PathVariable(name = "id") Integer id, @RequestParam Map<String, Object> like) {
         postService.like(id, Boolean.parseBoolean(like.get("like").toString()));
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
 
 
+    @PostMapping(value = "{id}/comments/{commentId}")
+    public String editComment(@PathVariable(name = "id") Integer id,
+                              @PathVariable(name = "commentId") Integer commentId,
+                              @RequestParam(name = "text") String text, Model model) {
+        postService.editComment(commentId, text);
+        model.addAttribute("post", postService.findById(id));
+        return "post";
+    }
 
+    @PostMapping(value = "{id}/comments")
+    public String createComment(@PathVariable(name = "id") Integer id,
+                                @RequestParam(name = "text") String text, Model model) {
+        postService.createComment(id, text);
+        model.addAttribute("post", postService.findById(id));
+        return "post";
+    }
+
+    @PostMapping(value = "{id}/comments/{commentId}/delete")
+    public String deleteComment(@PathVariable(name = "id") Integer id, @PathVariable(name = "commentId") Integer commentId, Model model) {
+        postService.deleteComment(commentId);
+        model.addAttribute("post", postService.findById(id));
+        return "post";
+    }
 
 
     @PostMapping(value = "/{id}/delete")
@@ -64,9 +86,10 @@ public class PostController {
         postService.deleteById(id);
         return "redirect:/posts";
     }
+
     @GetMapping(value = "/{id}/edit")
-    public String edit(Model model,@PathVariable(name = "id") Integer id) {
-        model.addAttribute("post",postService.findById(id));
+    public String edit(Model model, @PathVariable(name = "id") Integer id) {
+        model.addAttribute("post", postService.findById(id));
         return "add-post";
     }
 

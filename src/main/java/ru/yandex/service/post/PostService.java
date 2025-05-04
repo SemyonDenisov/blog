@@ -6,13 +6,22 @@ import ru.yandex.model.Post;
 import java.util.List;
 
 
-
 public interface PostService {
     List<Post> findAll();
-    void save(Post post);
-    void deleteById(int id);
-    Post findById(int id);
-    void like(int id,boolean decision);
-    void edit(Post post);
-}
 
+    void save(Post post);
+
+    void deleteById(int id);
+
+    Post findById(int id);
+
+    void like(int id, boolean decision);
+
+    void editComment(int commentId, String text);
+
+    void createComment(int postId, String text);
+
+    void deleteComment(int commentId);
+
+    void editPost(Post post);
+}

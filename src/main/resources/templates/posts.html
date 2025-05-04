@@ -48,10 +48,10 @@
                 <p th:text="${post.getTextPreview()}"></p>
                 <p>
                     <span th:text="${'&#x1F44D; '+post.getLikesCount()}"></span>
-<!--                    <span th:text="${'&#x2709; '+post.getComments().size()}"></span>-->
+                    <span th:text="${'&#x2709; '+post.getComments().size()}"></span>
                 </p>
                 <p>
-<!--                    <span th:each="tag : ${post.getTags()}" th:text="${'#'+tag+' '}"></span>-->
+                    <span th:each="tag : ${post.getTags()}" th:text="${'#'+tag+' '}"></span>
                 </p>
             </td>
         </tr>
