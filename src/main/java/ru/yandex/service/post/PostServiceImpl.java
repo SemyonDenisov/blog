@@ -5,6 +5,7 @@ import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import ru.yandex.DAO.post.PostRepository;
 import ru.yandex.model.Post;
+import ru.yandex.paging.Paging;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findAll() {
-        return postRepository.findAll();
+    public List<Post> findAll(int pageSize,int pageNumber) {
+        return postRepository.findAll(pageSize,pageNumber);
     }
 
     @Override
@@ -74,7 +75,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findAllByTag(String tag) {
-        return postRepository.findAllByTag(tag);
+    public List<Post> findAllByTagOfDefault(String tag,int pageSize,int pageNumber) {
+        return postRepository.findAllByTagOfDefault(tag,pageSize,pageNumber);
+    }
+    @Override
+    public Paging getPaging(String tag, int pageSize, int pageNumber){
+        return postRepository.getPaging(tag,pageSize,pageNumber);
     }
 }

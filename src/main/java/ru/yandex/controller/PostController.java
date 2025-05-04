@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.DTO.PostDTO;
 import ru.yandex.mapper.PostMapper;
 import ru.yandex.model.Post;
+import ru.yandex.paging.Paging;
 import ru.yandex.service.post.PostService;
 
 import java.util.List;
@@ -41,14 +42,15 @@ public class PostController {
     }
 
     @GetMapping
-    public String posts(Model model, @RequestParam(name = "search",defaultValue = "") String search) {
-        List<Post> posts;
-        if (search.isEmpty()) {
-            posts = postService.findAll();
-        } else {
-            posts = postService.findAllByTag(search.trim());
-        }
+    public String posts(Model model,
+                        @RequestParam(name = "search", defaultValue = "") String search,
+                        @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                        @RequestParam(name = "pageNumber", defaultValue = "1") Integer pageNumber
+    ) {
+        List<Post> posts = postService.findAllByTagOfDefault(search.trim(), pageSize, pageNumber);
+        Paging paging = postService.getPaging(search.trim(), pageSize, pageNumber);
         model.addAttribute("posts", posts);
+        model.addAttribute("paging", paging);
         return "posts";
     }
 

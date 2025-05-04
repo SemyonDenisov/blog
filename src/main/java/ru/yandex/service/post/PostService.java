@@ -2,12 +2,13 @@ package ru.yandex.service.post;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.model.Post;
+import ru.yandex.paging.Paging;
 
 import java.util.List;
 
 
 public interface PostService {
-    List<Post> findAll();
+    List<Post> findAll(int pageSize,int pageNumber);
 
     void save(Post post);
 
@@ -24,5 +25,7 @@ public interface PostService {
     void deleteComment(int commentId);
 
     void editPost(Post post);
-    List<Post> findAllByTag(String tag);
+    List<Post> findAllByTagOfDefault(String tag,int skip,int limit);
+
+    Paging getPaging(String tag, int pageSize, int pageNumber);
 }

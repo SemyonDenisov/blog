@@ -1,7 +1,6 @@
 package ru.yandex.DAO.post;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -9,10 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.model.Comment;
 import ru.yandex.model.Post;
 import ru.yandex.model.Tag;
+import ru.yandex.paging.Paging;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +39,7 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findAll() {
+    public List<Post> findAll(int pageSize, int pageNumber) {
         return jdbcTemplate.query(
                 "select id, title, text, imageUrl,likes from posts",
                 (rs, rowNum) -> new Post(
@@ -126,10 +123,26 @@ public class JdbcNativePostRepository implements PostRepository {
         jdbcTemplate.update("delete from posts_comments where comment_id = ?", commentId);
     }
 
+
+
     @Override
-    public List<Post> findAllByTag(String tag) {
-        return jdbcTemplate.query("select posts.id, title, text, imageUrl,likes from posts join posts_tags on posts.id = posts_tags.post_id join tags on tag_id=tags.id where tags.tag=?",
-                new Object[]{tag},
+    public List<Post> findAllByTagOfDefault(String tag, int pageSize, int pageNumber) {
+        if(tag.isEmpty()){
+            return jdbcTemplate.query(
+                    "select id, title, text, imageUrl,likes from posts limit ? offset ?",
+                    new Object[]{pageSize, (pageNumber-1)*pageSize},
+                    (rs, rowNum) -> new Post(
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getString("text"),
+                            rs.getString("imageUrl"),
+                            rs.getInt("likes"),
+                            getTagsByPostId(rs.getInt("id")),
+                            getCommentsByPostId(rs.getInt("id"))
+                    ));
+        }
+        return jdbcTemplate.query("select posts.id, title, text, imageUrl,likes from posts join posts_tags on posts.id = posts_tags.post_id join tags on tag_id=tags.id where tags.tag=? limit ? offset ?",
+                new Object[]{tag, pageSize, (pageNumber-1)*pageSize},
                 (rs, rowNum) -> new Post(
                         rs.getInt("id"),
                         rs.getString("title"),
@@ -139,6 +152,35 @@ public class JdbcNativePostRepository implements PostRepository {
                         getTagsByPostId(rs.getInt("id")),
                         getCommentsByPostId(rs.getInt("id"))
                 ));
+    }
+
+    @Override
+    public Paging getPaging(String tag, int pageSize, int pageNumber){
+        if(tag.isEmpty()){
+            return jdbcTemplate.query("select count(*) as cnt from posts",
+                    rs -> {
+                        if (rs.next()) {
+                            int count = rs.getInt(1);
+                            boolean hasNext = count > pageSize * pageNumber;
+                            boolean hasPrevious = pageNumber != 1;
+                            return new Paging(pageSize, pageNumber, hasNext, hasPrevious);
+                        }
+                        else {
+                            return null;
+                        }
+                    }
+            );
+
+        }
+        return jdbcTemplate.query("select count(*) as cnt from posts join posts_tags on posts.id = posts_tags.post_id join tags on tag_id=tags.id where tags.tag=?",
+                new Object[]{tag},
+                rs -> {
+                    int count = rs.getInt("cnt");
+                    boolean hasNext= count > pageSize * pageNumber;
+                    boolean hasPrevious = pageNumber==1;
+                    return new Paging(pageSize,pageNumber,hasNext,hasPrevious);
+                }
+                );
     }
 
 }

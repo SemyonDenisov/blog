@@ -22,6 +22,15 @@ create table if not exists posts_tags(
 insert into posts(title, text, imageUrl,likes) values ('Пост 1', 'Текст 1', 'imageUrl',9);
 insert into posts(title, text, imageUrl,likes) values ('Пост 2', 'Текст 2', 'ImageUrl', 1);
 insert into posts(title, text, imageUrl,likes) values ('Пост 3', 'Текст 3', 'ImageUrl', 3);
+insert into posts(title, text, imageUrl,likes) values ('Пост 4', 'Текст 1', 'imageUrl',9);
+insert into posts(title, text, imageUrl,likes) values ('Пост 5', 'Текст 2', 'ImageUrl', 1);
+insert into posts(title, text, imageUrl,likes) values ('Пост 6', 'Текст 3', 'ImageUrl', 3);
+insert into posts(title, text, imageUrl,likes) values ('Пост 7', 'Текст 1', 'imageUrl',9);
+insert into posts(title, text, imageUrl,likes) values ('Пост 8', 'Текст 2', 'ImageUrl', 1);
+insert into posts(title, text, imageUrl,likes) values ('Пост 9', 'Текст 3', 'ImageUrl', 3);
+insert into posts(title, text, imageUrl,likes) values ('Пост 10', 'Текст 1', 'imageUrl',9);
+insert into posts(title, text, imageUrl,likes) values ('Пост 11', 'Текст 2', 'ImageUrl', 1);
+insert into posts(title, text, imageUrl,likes) values ('Пост 12', 'Текст 3', 'ImageUrl', 3);
 
 insert into tags(tag) values('спорт');
 insert into tags(tag) values('искусство');
