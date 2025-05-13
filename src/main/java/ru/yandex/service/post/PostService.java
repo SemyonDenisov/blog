@@ -1,7 +1,9 @@
 package ru.yandex.service.post;
 
 import org.springframework.stereotype.Service;
+import ru.yandex.DTO.PostDTO;
 import ru.yandex.model.Post;
+import ru.yandex.model.Tag;
 import ru.yandex.paging.Paging;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
 public interface PostService {
     List<Post> findAll(int pageSize,int pageNumber);
 
-    void save(Post post);
+    void save(PostDTO post);
 
     void deleteById(int id);
 

@@ -1,15 +1,21 @@
 package ru.yandex.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.DTO.PostDTO;
+import ru.yandex.DTO.PostEditDTO;
 import ru.yandex.mapper.PostMapper;
 import ru.yandex.model.Post;
+import ru.yandex.model.Tag;
 import ru.yandex.paging.Paging;
 import ru.yandex.service.post.PostService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +28,18 @@ public class PostController {
     private final PostMapper postMapper;
 
 
-    @PostMapping(value = "/{id}")
-    public String editPost(Model model, @PathVariable(name = "id") Integer id, @RequestParam(name = "post") PostDTO postDTO) {
-        System.out.println(postDTO);
+    @PostMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public String editPost(Model model,
+                           @PathVariable(name = "id") Integer id,
+                           @RequestPart(name = "title") String title,
+                           @RequestPart(name = "text") String text,
+                           @RequestPart(name = "image", required = false) MultipartFile image,
+                           @RequestPart(name = "tags") String tags) {
+        Post post = postService.findById(id);
+        post.setTitle(title);
+        post.setText(text);
+        post.setTags(tags);
+        postService.editPost(post);
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
@@ -36,8 +51,12 @@ public class PostController {
     }
 
     @PostMapping
-    public String postPost(@RequestParam(name = "post") PostDTO postDTO) {
-        postService.save(postMapper.mapToPost(postDTO));
+    public String postPost(@RequestPart(name = "title") String title,
+                            @RequestPart(name = "text") String text,
+                            @RequestPart(name = "image", required = false) MultipartFile image,
+                            @RequestPart(name = "tags") String tags) {
+        PostDTO postDTO = new PostDTO(title,text,"",tags);
+        postService.save(postDTO);
         return "redirect:/posts";
     }
 
@@ -96,7 +115,8 @@ public class PostController {
 
     @GetMapping(value = "/{id}/edit")
     public String edit(Model model, @PathVariable(name = "id") Integer id) {
-        model.addAttribute("post", postService.findById(id));
+        Post p = postService.findById(id);
+        model.addAttribute("post", p);
         return "add-post";
     }
 

@@ -4,7 +4,9 @@ package ru.yandex.service.post;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import ru.yandex.DAO.post.PostRepository;
+import ru.yandex.DTO.PostDTO;
 import ru.yandex.model.Post;
+import ru.yandex.model.Tag;
 import ru.yandex.paging.Paging;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void save(Post post) {
+    public void save(PostDTO post) {
         postRepository.save(post);
     }
 
@@ -41,7 +43,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void editPost(Post post) {
-
+        postRepository.updatePost(post);
     }
 
     @Override

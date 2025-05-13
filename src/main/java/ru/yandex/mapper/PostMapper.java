@@ -7,6 +7,5 @@ import ru.yandex.model.Post;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PostMapper {
-    PostDTO mapToDTO(Post post);
     Post mapToPost(PostDTO postDTO);
 }

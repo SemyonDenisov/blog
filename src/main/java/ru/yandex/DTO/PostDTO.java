@@ -1,12 +1,13 @@
 package ru.yandex.DTO;
 
 
+import lombok.AllArgsConstructor;
 
-public class PostDTO{
-        private String title;
-        private String text;
-        public PostDTO(String title, String text){
-                this.title = title;
-                this.text = text;
-        }
-}
+
+
+
+
+public record  PostDTO(String title,
+                       String text,
+                       String imageUrl,
+                       String tags){}

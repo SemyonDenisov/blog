@@ -5,6 +5,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.DTO.PostDTO;
 import ru.yandex.model.Comment;
 import ru.yandex.model.Post;
 import ru.yandex.model.Tag;
@@ -24,12 +25,6 @@ public class JdbcNativePostRepository implements PostRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Tag> getTagsByPostId(int postId) {
-        return jdbcTemplate.query("SELECT tags.id,tags.tag FROM posts join posts_tags on posts.id = posts_tags.post_id join tags on tag_id=tags.id where posts.id=?",
-                new Object[]{postId},
-                (rs, rowNum) -> new Tag(rs.getInt("id"), rs.getString("tag")));
-    }
-
     public List<Comment> getCommentsByPostId(int postId) {
         return new ArrayList<>(jdbcTemplate.query("SELECT comments.id,comments.text FROM posts join posts_comments on posts.id = posts_comments.post_id join comments on comment_id=comments.id where posts.id=?",
                 new Object[]{postId},
@@ -41,37 +36,39 @@ public class JdbcNativePostRepository implements PostRepository {
     @Override
     public List<Post> findAll(int pageSize, int pageNumber) {
         return jdbcTemplate.query(
-                "select id, title, text, imageUrl,likes from posts",
+                "select id, title, text, imageUrl,likes,tags from posts",
                 (rs, rowNum) -> new Post(
                         rs.getInt("id"),
                         rs.getString("title"),
                         rs.getString("text"),
                         rs.getString("imageUrl"),
                         rs.getInt("likes"),
-                        getTagsByPostId(rs.getInt("id")),
+                        rs.getString("tags"),
                         getCommentsByPostId(rs.getInt("id"))
                 ));
     }
 
     @Override
-    public void save(Post post) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update("insert into posts(title, text, imageUrl, likes) values(?, ?, ?, ?)",
-                post.getTitle(), post.getText(), post.getImageUrl(), post.getLikes(), keyHolder);
-        int insertedId = Objects.requireNonNull(keyHolder.getKey()).intValue();
-        post.getTags().forEach(tagName -> Optional.ofNullable(jdbcTemplate.queryForObject("select tags.id from tags where tag=?",
-                Integer.class, tagName)).ifPresent(tagId -> jdbcTemplate.update("insert into posts_tags values(?, ?)", insertedId, tagId)));
+    @Transactional
+    public void updatePost(Post post) {
+        jdbcTemplate.update("update posts set title=?, text=?, imageUrl=?, likes=?,tags=? where id=?",
+                post.getTitle(), post.getText(), post.getImageUrl(), post.getLikes(), post.getTagsAsText(), post.getId());
+
     }
 
     @Override
-    @Transactional
+    public void save(PostDTO post) {
+        jdbcTemplate.update("insert into posts(title, text, imageUrl, likes,tags) values(?, ?, ?, ?, ?)",
+                post.title(), post.text(), post.imageUrl(), 0, post.tags());
+    }
+
+    @Override
     public void deleteById(int id) {
         jdbcTemplate.update("delete from posts where id = ?", id);
-        jdbcTemplate.update("delete from posts_tags where post_id = ?", id);
     }
 
     public Optional<Post> findById(int id) {
-        return Optional.ofNullable(jdbcTemplate.query("select id, title, text, imageUrl,likes from posts where id = ?", new Object[]{id},
+        return Optional.ofNullable(jdbcTemplate.query("select id, title, text, imageUrl,likes,tags from posts where id = ?", new Object[]{id},
                 rs -> {
                     if (rs.next()) {
                         return new Post(rs.getInt("id"),
@@ -79,7 +76,7 @@ public class JdbcNativePostRepository implements PostRepository {
                                 rs.getString("text"),
                                 rs.getString("imageUrl"),
                                 rs.getInt("likes"),
-                                getTagsByPostId(rs.getInt("id")),
+                                rs.getString("tags"),
                                 getCommentsByPostId(rs.getInt("id"))
                         );
                     } else {
@@ -124,39 +121,38 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
 
-
     @Override
     public List<Post> findAllByTagOfDefault(String tag, int pageSize, int pageNumber) {
-        if(tag.isEmpty()){
+        if (tag.isEmpty()) {
             return jdbcTemplate.query(
-                    "select id, title, text, imageUrl,likes from posts limit ? offset ?",
-                    new Object[]{pageSize, (pageNumber-1)*pageSize},
+                    "select id, title, text, imageUrl,likes,tags from posts limit ? offset ?",
+                    new Object[]{pageSize, (pageNumber - 1) * pageSize},
                     (rs, rowNum) -> new Post(
                             rs.getInt("id"),
                             rs.getString("title"),
                             rs.getString("text"),
                             rs.getString("imageUrl"),
                             rs.getInt("likes"),
-                            getTagsByPostId(rs.getInt("id")),
+                            rs.getString("tags"),
                             getCommentsByPostId(rs.getInt("id"))
                     ));
         }
-        return jdbcTemplate.query("select posts.id, title, text, imageUrl,likes from posts join posts_tags on posts.id = posts_tags.post_id join tags on tag_id=tags.id where tags.tag=? limit ? offset ?",
-                new Object[]{tag, pageSize, (pageNumber-1)*pageSize},
+        return jdbcTemplate.query("select posts.id, title, text, imageUrl,likes,tags from posts where tags like ? limit ? offset ?",
+                new Object[]{"%" + tag + "%", pageSize, (pageNumber - 1) * pageSize},
                 (rs, rowNum) -> new Post(
                         rs.getInt("id"),
                         rs.getString("title"),
                         rs.getString("text"),
                         rs.getString("imageUrl"),
                         rs.getInt("likes"),
-                        getTagsByPostId(rs.getInt("id")),
+                        rs.getString("tags"),
                         getCommentsByPostId(rs.getInt("id"))
                 ));
     }
 
     @Override
-    public Paging getPaging(String tag, int pageSize, int pageNumber){
-        if(tag.isEmpty()){
+    public Paging getPaging(String tag, int pageSize, int pageNumber) {
+        if (tag.isEmpty()) {
             return jdbcTemplate.query("select count(*) as cnt from posts",
                     rs -> {
                         if (rs.next()) {
@@ -164,23 +160,26 @@ public class JdbcNativePostRepository implements PostRepository {
                             boolean hasNext = count > pageSize * pageNumber;
                             boolean hasPrevious = pageNumber != 1;
                             return new Paging(pageSize, pageNumber, hasNext, hasPrevious);
-                        }
-                        else {
+                        } else {
                             return null;
                         }
                     }
             );
 
         }
-        return jdbcTemplate.query("select count(*) as cnt from posts join posts_tags on posts.id = posts_tags.post_id join tags on tag_id=tags.id where tags.tag=?",
-                new Object[]{tag},
+        return jdbcTemplate.query("select count(*) as cnt from posts where tags like ?",
+                new Object[]{"%" + tag + "%"},
                 rs -> {
-                    int count = rs.getInt("cnt");
-                    boolean hasNext= count > pageSize * pageNumber;
-                    boolean hasPrevious = pageNumber==1;
-                    return new Paging(pageSize,pageNumber,hasNext,hasPrevious);
+                    if (rs.next()) {
+                        int count = rs.getInt("cnt");
+                        boolean hasNext = count > pageSize * pageNumber;
+                        boolean hasPrevious = pageNumber != 1;
+                        return new Paging(pageSize, pageNumber, hasNext, hasPrevious);
+                    } else {
+                        return null;
+                    }
                 }
-                );
+        );
     }
 
 }

@@ -4,42 +4,28 @@ create table if not exists posts(
                                     title varchar(30) not null,
                                     text varchar(256) not null,
                                     imageUrl varchar(256) not null,
-                                    likes integer
+                                    likes integer,
+                                    tags varchar(256) not null
     );
 
 
-create table if not exists tags(
-                                    id bigserial primary key,
-                                    tag varchar(30) not null
-    );
-
-create table if not exists posts_tags(
-                                         post_id bigserial,
-                                         tag_id bigserial
-);
 
 
-insert into posts(title, text, imageUrl,likes) values ('Пост 1', 'Текст 1', 'imageUrl',9);
-insert into posts(title, text, imageUrl,likes) values ('Пост 2', 'Текст 2', 'ImageUrl', 1);
-insert into posts(title, text, imageUrl,likes) values ('Пост 3', 'Текст 3', 'ImageUrl', 3);
-insert into posts(title, text, imageUrl,likes) values ('Пост 4', 'Текст 1', 'imageUrl',9);
-insert into posts(title, text, imageUrl,likes) values ('Пост 5', 'Текст 2', 'ImageUrl', 1);
-insert into posts(title, text, imageUrl,likes) values ('Пост 6', 'Текст 3', 'ImageUrl', 3);
-insert into posts(title, text, imageUrl,likes) values ('Пост 7', 'Текст 1', 'imageUrl',9);
-insert into posts(title, text, imageUrl,likes) values ('Пост 8', 'Текст 2', 'ImageUrl', 1);
-insert into posts(title, text, imageUrl,likes) values ('Пост 9', 'Текст 3', 'ImageUrl', 3);
-insert into posts(title, text, imageUrl,likes) values ('Пост 10', 'Текст 1', 'imageUrl',9);
-insert into posts(title, text, imageUrl,likes) values ('Пост 11', 'Текст 2', 'ImageUrl', 1);
-insert into posts(title, text, imageUrl,likes) values ('Пост 12', 'Текст 3', 'ImageUrl', 3);
-
-insert into tags(tag) values('спорт');
-insert into tags(tag) values('искусство');
-insert into tags(tag) values('политика');
 
 
-insert into posts_tags(post_id,tag_id) values(1,1);
-insert into posts_tags(post_id,tag_id) values(1,2);
-insert into posts_tags(post_id,tag_id) values(3,3);
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 1', 'Text 1', 'imageUrl',9,'sport');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 2', 'Text 2', 'ImageUrl', 1,'sport');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 3', 'Text 3', 'ImageUrl', 3,'sport');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 4', 'Text 1', 'imageUrl',9,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 5', 'Text 2', 'ImageUrl', 1,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 6', 'Text 3', 'ImageUrl', 3,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 7', 'Text 1', 'imageUrl',9,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 8', 'Text 2', 'ImageUrl', 1,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 9', 'Text 3', 'ImageUrl', 3,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 10', 'Text 1', 'imageUrl',9,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 11', 'Text 2', 'ImageUrl', 1,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 12', 'Text 3', 'ImageUrl', 3,'reading');
+
 
 create table if not exists comments(
                                    id bigserial primary key,
@@ -51,9 +37,9 @@ create table if not exists posts_comments(
                                          comment_id bigserial
 );
 
-insert into comments(text) values('Класс');
-insert into comments(text) values('Не очень ');
-insert into comments(text) values('Неплохо');
+insert into comments(text) values('Good');
+insert into comments(text) values('Bad');
+insert into comments(text) values('Not bad');
 
 
 insert into posts_comments(post_id,comment_id) values(1,1);
