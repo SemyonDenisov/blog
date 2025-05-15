@@ -18,11 +18,6 @@ public interface PostRepository {
 
     void updateLikesCount(int id, boolean decision);
 
-    void editComment(int commentId, String text);
-
-    void createComment(int postId, String text);
-
-    void deleteCommentById(int commentId);
     void updatePost(Post post);
     List<Post> findAllByTagOfDefault(String tag,int pageSize,int pageNumber);
 

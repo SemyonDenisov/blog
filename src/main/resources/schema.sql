@@ -13,18 +13,18 @@ create table if not exists posts(
 
 
 
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 1', 'Text 1', 'imageUrl',9,'sport');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 2', 'Text 2', 'ImageUrl', 1,'sport');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 3', 'Text 3', 'ImageUrl', 3,'sport');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 4', 'Text 1', 'imageUrl',9,'health');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 5', 'Text 2', 'ImageUrl', 1,'health');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 6', 'Text 3', 'ImageUrl', 3,'health');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 7', 'Text 1', 'imageUrl',9,'health');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 8', 'Text 2', 'ImageUrl', 1,'reading');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 9', 'Text 3', 'ImageUrl', 3,'reading');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 10', 'Text 1', 'imageUrl',9,'reading');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 11', 'Text 2', 'ImageUrl', 1,'reading');
-insert into posts(title, text, imageUrl,likes,tags) values ('Post 12', 'Text 3', 'ImageUrl', 3,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 1', 'Text 1', 'E:\Yandex\app\Blog\storage\1.jpg',9,'sport');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 2', 'Text 2', 'E:\Yandex\app\Blog\storage\2.jpg', 1,'sport');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 3', 'Text 3', 'E:\Yandex\app\Blog\storage\3.jpg', 3,'sport');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 4', 'Text 1', 'E:\Yandex\app\Blog\storage\4.jpg',9,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 5', 'Text 2', 'E:\Yandex\app\Blog\storage\5.jpg', 1,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 6', 'Text 3', 'E:\Yandex\app\Blog\storage\6.jpg', 3,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 7', 'Text 1', 'E:\Yandex\app\Blog\storage\7.jpg',9,'health');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 8', 'Text 2', 'E:\Yandex\app\Blog\storage\8.jpg', 1,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 9', 'Text 3', 'E:\Yandex\app\Blog\storage\9.jpg', 3,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 10', 'Text 1', 'E:\Yandex\app\Blog\storage\10.jpg',9,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 11', 'Text 2', 'E:\Yandex\app\Blog\storage\11.jpg', 1,'reading');
+insert into posts(title, text, imageUrl,likes,tags) values ('Post 12', 'Text 3', 'E:\Yandex\app\Blog\storage\12.jpg', 3,'reading');
 
 
 create table if not exists comments(

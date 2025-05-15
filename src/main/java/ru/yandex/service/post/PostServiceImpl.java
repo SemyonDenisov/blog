@@ -1,16 +1,13 @@
 package ru.yandex.service.post;
 
 
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 import ru.yandex.DAO.post.PostRepository;
 import ru.yandex.DTO.PostDTO;
 import ru.yandex.model.Post;
-import ru.yandex.model.Tag;
 import ru.yandex.paging.Paging;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -46,20 +43,6 @@ public class PostServiceImpl implements PostService {
         postRepository.updatePost(post);
     }
 
-    @Override
-    public void editComment(int commentId, String text) {
-        postRepository.editComment(commentId, text);
-    }
-
-    @Override
-    public void createComment(int postId, String text) {
-        postRepository.createComment(postId, text);
-    }
-
-    @Override
-    public void deleteComment(int commentId) {
-        postRepository.deleteCommentById(commentId);
-    }
 
     @Override
     public void like(int id, boolean decision) {

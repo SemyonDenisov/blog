@@ -1,9 +1,7 @@
 package ru.yandex.service.post;
 
-import org.springframework.stereotype.Service;
 import ru.yandex.DTO.PostDTO;
 import ru.yandex.model.Post;
-import ru.yandex.model.Tag;
 import ru.yandex.paging.Paging;
 
 import java.util.List;
@@ -19,12 +17,6 @@ public interface PostService {
     Post findById(int id);
 
     void like(int id, boolean decision);
-
-    void editComment(int commentId, String text);
-
-    void createComment(int postId, String text);
-
-    void deleteComment(int commentId);
 
     void editPost(Post post);
     List<Post> findAllByTagOfDefault(String tag,int skip,int limit);

@@ -1,23 +1,25 @@
 package ru.yandex.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.DTO.PostDTO;
-import ru.yandex.DTO.PostEditDTO;
 import ru.yandex.mapper.PostMapper;
 import ru.yandex.model.Post;
-import ru.yandex.model.Tag;
 import ru.yandex.paging.Paging;
+import ru.yandex.service.comment.CommentService;
 import ru.yandex.service.post.PostService;
+import ru.yandex.tools.ImageValidator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 @Controller
 @RequestMapping("/posts")
@@ -25,10 +27,13 @@ import java.util.Map;
 public class PostController {
 
     private final PostService postService;
-    private final PostMapper postMapper;
+    private final CommentService commentService;
 
+    @Value("${spring.image.savePath}")
+    private String imageSavePath;
 
     @PostMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+
     public String editPost(Model model,
                            @PathVariable(name = "id") Integer id,
                            @RequestPart(name = "title") String title,
@@ -39,6 +44,21 @@ public class PostController {
         post.setTitle(title);
         post.setText(text);
         post.setTags(tags);
+        if (image != null) {
+            try {
+                if (ImageValidator.isValidImage(image)) {
+                    UUID uuid = UUID.randomUUID();
+                    String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
+                    String newImageUrl = imageSavePath + "\\" + uuid + "." + extension;
+                    image.transferTo(new File(newImageUrl));
+                    if (!new File(post.getImageUrl()).delete()) {
+                        System.out.println("Cannot delete file: " + post.getImageUrl());
+                    }
+                    post.setImageUrl(newImageUrl);
+                }
+            } catch (Exception ignored) {
+            }
+        }
         postService.editPost(post);
         model.addAttribute("post", postService.findById(id));
         return "post";
@@ -50,13 +70,31 @@ public class PostController {
         return "post";
     }
 
+    @GetMapping(value = "/images/{id}")
+    public @ResponseBody byte[] getImage(@PathVariable(name = "id") Integer id) {
+        try {
+            Post post = postService.findById(id);
+            return Files.readAllBytes(Path.of(post.getImageUrl()));
+        } catch (Exception ignored) {
+        }
+        return new byte[0];
+    }
+
     @PostMapping
     public String postPost(@RequestPart(name = "title") String title,
-                            @RequestPart(name = "text") String text,
-                            @RequestPart(name = "image", required = false) MultipartFile image,
-                            @RequestPart(name = "tags") String tags) {
-        PostDTO postDTO = new PostDTO(title,text,"",tags);
-        postService.save(postDTO);
+                           @RequestPart(name = "text") String text,
+                           @RequestPart(name = "image") MultipartFile image,
+                           @RequestPart(name = "tags") String tags) throws IOException {
+        if (ImageValidator.isValidImage(image)) {
+            UUID uuid = UUID.randomUUID();
+            String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
+            String imageUrl = imageSavePath + "\\" + uuid + "." + extension;
+            image.transferTo(new File(imageUrl));
+            PostDTO postDTO = new PostDTO(title, text, imageUrl, tags);
+            postService.save(postDTO);
+        } else {
+            System.out.println("Invalid image");
+        }
         return "redirect:/posts";
     }
 
@@ -66,9 +104,11 @@ public class PostController {
                         @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                         @RequestParam(name = "pageNumber", defaultValue = "1") Integer pageNumber
     ) {
+        search = search.trim();
         List<Post> posts = postService.findAllByTagOfDefault(search.trim(), pageSize, pageNumber);
-        Paging paging = postService.getPaging(search.trim(), pageSize, pageNumber);
+        Paging paging = postService.getPaging(search, pageSize, pageNumber);
         model.addAttribute("posts", posts);
+        model.addAttribute("search",search);
         model.addAttribute("paging", paging);
         return "posts";
     }
@@ -81,12 +121,11 @@ public class PostController {
         return "post";
     }
 
-
     @PostMapping(value = "{id}/comments/{commentId}")
     public String editComment(@PathVariable(name = "id") Integer id,
                               @PathVariable(name = "commentId") Integer commentId,
                               @RequestParam(name = "text") String text, Model model) {
-        postService.editComment(commentId, text);
+        commentService.editComment(commentId, text);
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
@@ -94,18 +133,17 @@ public class PostController {
     @PostMapping(value = "{id}/comments")
     public String createComment(@PathVariable(name = "id") Integer id,
                                 @RequestParam(name = "text") String text, Model model) {
-        postService.createComment(id, text);
+        commentService.createComment(id, text);
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
 
     @PostMapping(value = "{id}/comments/{commentId}/delete")
     public String deleteComment(@PathVariable(name = "id") Integer id, @PathVariable(name = "commentId") Integer commentId, Model model) {
-        postService.deleteComment(commentId);
+        commentService.deleteComment(commentId);
         model.addAttribute("post", postService.findById(id));
         return "post";
     }
-
 
     @PostMapping(value = "/{id}/delete")
     public String delete(@PathVariable(name = "id") Integer id) {
@@ -120,12 +158,9 @@ public class PostController {
         return "add-post";
     }
 
-
     @GetMapping
     @RequestMapping("/add")
     public String create() {
         return "add-post";
     }
-
-
 }
