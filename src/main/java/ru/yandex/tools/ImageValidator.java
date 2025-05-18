@@ -9,6 +9,7 @@ import java.util.Objects;
 
 public class ImageValidator {
     public static boolean isValidImage(MultipartFile image){
+        if(image==null) return false;
         String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
         return List.of("jpg", "jpeg", "png").contains(extension);
     }

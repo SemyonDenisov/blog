@@ -1,9 +1,11 @@
 package ru.yandex.service.comment;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.DAO.comment.CommentRepository;
 
 @Service
+@Primary
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
