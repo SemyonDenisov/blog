@@ -38,7 +38,12 @@ public class Post {
     }
 
     public String getTextPreview() {
-        return this.text.substring(0, 2);
+        if(text.length()<20){
+            return text;
+        }
+        else {
+            return Arrays.stream(text.split(" ")).limit(5).reduce("", (a,b)->a+" "+b);
+        }
     }
 
     public String getTagsAsText() {

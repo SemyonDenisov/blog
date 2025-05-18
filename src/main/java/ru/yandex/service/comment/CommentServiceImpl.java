@@ -3,6 +3,7 @@ package ru.yandex.service.comment;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.DAO.comment.CommentRepository;
+import ru.yandex.tools.InputValidator;
 
 @Service
 @Primary
@@ -15,12 +16,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void editComment(int commentId, String text) {
-        commentRepository.editComment(commentId, text);
+        if(InputValidator.isValidComment(text)) {
+            commentRepository.editComment(commentId, text);
+        }
     }
 
     @Override
     public void createComment(int postId, String text) {
-        commentRepository.createComment(postId, text);
+        if(InputValidator.isValidComment(text)) {
+            commentRepository.createComment(postId, text);
+        }
     }
 
     @Override

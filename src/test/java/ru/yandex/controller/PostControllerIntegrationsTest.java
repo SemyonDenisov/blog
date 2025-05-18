@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.TestPropertySource;
@@ -14,10 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.configuration.TestDataSourceConfiguration;
-import ru.yandex.configuration.TestConfig;
 import ru.yandex.configuration.WebConfiguration;
+import ru.yandex.configuration.integration.IntegrationConfig;
 import ru.yandex.model.Post;
 
 
@@ -27,7 +25,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringJUnitWebConfig(classes = {WebConfiguration.class, ru.yandex.configuration.integration.TestConfig.class, TestDataSourceConfiguration.class})
+@SpringJUnitWebConfig(classes = {WebConfiguration.class,TestDataSourceConfiguration.class, IntegrationConfig.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class PostControllerIntegrationsTest {
 
@@ -68,16 +66,6 @@ public class PostControllerIntegrationsTest {
                 "insert into posts_comments(post_id,comment_id) values(3,3);");
         jdbcTemplate.execute("insert into posts(title, text, imageUrl,likes,tags) values ('Post 1', 'Text 1', '" + imageSavePath + "1.jpg', 1,'sport');");
         jdbcTemplate.execute("insert into posts(title, text, imageUrl,likes,tags) values ('Post 2', 'Text 2', '" + imageSavePath + "2.jpg', 3,'sport');");
-        List<Post> posts = jdbcTemplate.query("select * from posts;", (rs, rowNum) -> new Post(
-                rs.getInt("id"),
-                rs.getString("title"),
-                rs.getString("text"),
-                rs.getString("imageUrl"),
-                rs.getInt("likes"),
-                rs.getString("tags"),
-                new ArrayList<>())
-        );
-        posts.forEach(post -> {System.out.println(post.getId());});
     }
 
 

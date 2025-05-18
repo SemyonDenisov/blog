@@ -12,7 +12,7 @@ import ru.yandex.model.Post;
 import ru.yandex.paging.Paging;
 import ru.yandex.service.comment.CommentService;
 import ru.yandex.service.post.PostService;
-import ru.yandex.tools.ImageValidator;
+import ru.yandex.tools.InputValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,14 +38,13 @@ public class PostController {
                            @RequestPart(name = "text") String text,
                            @RequestPart(name = "image", required = false) MultipartFile image,
                            @RequestPart(name = "tags") String tags) {
-        System.out.println("-------------- id "+id);
         Post post = postService.findById(id);
         post.setTitle(title);
         post.setText(text);
         post.setTags(tags);
         if (image != null) {
             try {
-                if (ImageValidator.isValidImage(image)) {
+                if (InputValidator.isValidImage(image)) {
                     UUID uuid = UUID.randomUUID();
                     String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
                     String newImageUrl = imageSavePath + "\\" + uuid + "." + extension;
@@ -84,7 +83,7 @@ public class PostController {
                            @RequestPart(name = "text") String text,
                            @RequestPart(name = "image") MultipartFile image,
                            @RequestPart(name = "tags") String tags) throws IOException {
-        if (ImageValidator.isValidImage(image)) {
+        if (InputValidator.isValidImage(image)) {
             UUID uuid = UUID.randomUUID();
             String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
             String imageUrl = imageSavePath + "\\" + uuid + "." + extension;

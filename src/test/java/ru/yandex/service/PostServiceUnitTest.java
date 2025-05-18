@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.yandex.DAO.post.PostRepository;
 import ru.yandex.DTO.PostDTO;
-import ru.yandex.configuration.TestConfig;
+import ru.yandex.configuration.unit.UnitPostConfig;
 import ru.yandex.model.Post;
 import ru.yandex.service.post.PostService;
 
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
+@ContextConfiguration(classes = UnitPostConfig.class)
 public class PostServiceUnitTest {
     @Autowired
     private PostRepository postRepository;
