@@ -1,5 +1,6 @@
 package ru.yandex.DAO.comment;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -10,6 +11,7 @@ import java.sql.Statement;
 import java.util.Objects;
 
 @Repository
+@Primary
 public class JdbcNativeCommentRepository implements CommentRepository {
     private final JdbcTemplate jdbcTemplate;
 

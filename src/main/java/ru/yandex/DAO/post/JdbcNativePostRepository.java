@@ -1,8 +1,7 @@
 package ru.yandex.DAO.post;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.DTO.PostDTO;
@@ -10,13 +9,12 @@ import ru.yandex.model.Comment;
 import ru.yandex.model.Post;
 import ru.yandex.paging.Paging;
 
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
+@Primary
 public class JdbcNativePostRepository implements PostRepository {
     private final JdbcTemplate jdbcTemplate;
 
@@ -156,5 +154,4 @@ public class JdbcNativePostRepository implements PostRepository {
                 }
         );
     }
-
 }
