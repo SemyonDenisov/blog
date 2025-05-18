@@ -47,6 +47,7 @@ public class PostControllerIntegrationsTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         jdbcTemplate.execute("drop table if exists posts;");
+        jdbcTemplate.execute("drop table if exists comments;");
         jdbcTemplate.execute("create table if not exists posts(\n" +
                 "                                    id bigserial primary key,\n" +
                 "                                    title varchar(30) not null,\n" +
@@ -55,6 +56,16 @@ public class PostControllerIntegrationsTest {
                 "                                    likes integer,\n" +
                 "                                    tags varchar(256) not null\n" +
                 "    );");
+        jdbcTemplate.execute("create table if not exists comments(\n" +
+                "                                   id bigserial primary key,\n" +
+                "                                   text varchar(60) not null\n" +
+                "    );");
+        jdbcTemplate.execute("insert into comments(text) values('Good');\n" +
+                "insert into comments(text) values('Bad');\n" +
+                "insert into comments(text) values('Not bad');");
+        jdbcTemplate.execute("insert into posts_comments(post_id,comment_id) values(1,1);\n" +
+                "insert into posts_comments(post_id,comment_id) values(1,2);\n" +
+                "insert into posts_comments(post_id,comment_id) values(3,3);");
         jdbcTemplate.execute("insert into posts(title, text, imageUrl,likes,tags) values ('Post 1', 'Text 1', '" + imageSavePath + "1.jpg', 1,'sport');");
         jdbcTemplate.execute("insert into posts(title, text, imageUrl,likes,tags) values ('Post 2', 'Text 2', '" + imageSavePath + "2.jpg', 3,'sport');");
         List<Post> posts = jdbcTemplate.query("select * from posts;", (rs, rowNum) -> new Post(
@@ -115,4 +126,36 @@ public class PostControllerIntegrationsTest {
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(xpath("//table//tr[2]//td//h2").string("ChangedTitle"));;
     }
+
+    @Test
+    void addComment_shouldAddCommentAndReturnFreshStateOfPost() throws Exception {
+        mockMvc.perform(post("/posts/{id}/comments",1).param("text","text"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
+                .andExpect(view().name("post"))
+                .andExpect(model().attributeExists("post"))
+                .andExpect(xpath("//table//tr").nodeCount(16))
+                .andExpect(xpath("//table//tr[15]//td//form//span").string("text"));
+    }
+
+    @Test
+    void editComment_shouldEditCommentAndReturnFreshStateOfPost() throws Exception {
+        mockMvc.perform(post("/posts/{id}/comments/{commentsId}",1,1).param("text","text"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
+                .andExpect(view().name("post"))
+                .andExpect(model().attributeExists("post"))
+                .andExpect(xpath("//table//tr").nodeCount(11))
+                .andExpect(xpath("//table//tr[9]//td//form//span").string("text"));
+    }
+
+    @Test
+    void deleteComment_shouldDeleteCommentAndReturnFreshStateOfPost() throws Exception {
+        mockMvc.perform(post("/posts/{id}/comments/{commentsId}/delete",1,1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
+                .andExpect(view().name("post"))
+                .andExpect(model().attributeExists("post"))
+                .andExpect(xpath("//table//tr").nodeCount(9))
+                .andExpect(xpath("//table//tr[8]//td//form//span").string("Bad"));}
 }

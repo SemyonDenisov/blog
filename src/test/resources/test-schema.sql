@@ -9,10 +9,6 @@ create table if not exists posts(
     );
 
 
-
-
-
-
 create table if not exists comments(
                                    id bigserial primary key,
                                    text varchar(60) not null

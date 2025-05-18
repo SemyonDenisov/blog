@@ -28,10 +28,6 @@ public class TestDataSourceConfiguration {
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
-
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("test-schema.sql")); // Файл должен находиться в ресурсах
-        populator.execute(dataSource);
         return dataSource;
     }
 
