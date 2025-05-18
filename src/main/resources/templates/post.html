@@ -45,7 +45,7 @@
 
 <body>
     <a th:href="@{'/posts'}" style="float:right;">
-        <b>НА ГЛАВНУЮ &cudarrr;</b>
+        <b>НА ГЛАВНУЮ</b>
     </a>
     <table style="width:50%;margin-left:auto;margin-right:auto;">
         <tr>
@@ -64,7 +64,7 @@
             <td>
                 <h2 th:text="${post.getTitle()}"></h2>
                 <p>
-                    <img height="300" th:src="@{${'/posts/images/'+post.getId()}}">
+                    <img height="300" th:src="@{${'/posts/images/'+post.getId()}}"/>
                 </p>
                 <p>
                     <form th:action="@{${'/posts/'+post.getId()+'/like'}}" method="POST">
@@ -86,6 +86,7 @@
             <td>
                 <hr>
                 <h2>Комментарии</h2>
+                </hr>
             </td>
         </tr>
         <tr th:each="comment : ${post.getComments()}">
@@ -110,3 +111,4 @@
         </tr>
     </table>
 </body>
+</html>

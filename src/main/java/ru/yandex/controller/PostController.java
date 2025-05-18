@@ -8,12 +8,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.DTO.PostDTO;
-import ru.yandex.mapper.PostMapper;
 import ru.yandex.model.Post;
 import ru.yandex.paging.Paging;
 import ru.yandex.service.comment.CommentService;
 import ru.yandex.service.post.PostService;
-import ru.yandex.tools.ImageValidator;
+import ru.yandex.tools.InputValidator;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +32,6 @@ public class PostController {
     private String imageSavePath;
 
     @PostMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-
     public String editPost(Model model,
                            @PathVariable(name = "id") Integer id,
                            @RequestPart(name = "title") String title,
@@ -46,7 +44,7 @@ public class PostController {
         post.setTags(tags);
         if (image != null) {
             try {
-                if (ImageValidator.isValidImage(image)) {
+                if (InputValidator.isValidImage(image)) {
                     UUID uuid = UUID.randomUUID();
                     String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
                     String newImageUrl = imageSavePath + "\\" + uuid + "." + extension;
@@ -85,7 +83,7 @@ public class PostController {
                            @RequestPart(name = "text") String text,
                            @RequestPart(name = "image") MultipartFile image,
                            @RequestPart(name = "tags") String tags) throws IOException {
-        if (ImageValidator.isValidImage(image)) {
+        if (InputValidator.isValidImage(image)) {
             UUID uuid = UUID.randomUUID();
             String extension = Objects.requireNonNull(image.getOriginalFilename()).split("\\.")[1];
             String imageUrl = imageSavePath + "\\" + uuid + "." + extension;

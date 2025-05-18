@@ -1,6 +1,7 @@
 package ru.yandex.service.post;
 
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ru.yandex.DAO.post.PostRepository;
 import ru.yandex.DTO.PostDTO;
@@ -10,6 +11,7 @@ import ru.yandex.paging.Paging;
 import java.util.List;
 
 @Service
+@Primary
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
