@@ -18,6 +18,7 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter
     private Integer id;
     @Setter
     private String title;

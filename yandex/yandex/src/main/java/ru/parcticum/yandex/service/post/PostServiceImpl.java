@@ -20,7 +20,7 @@ public class PostServiceImpl implements PostService {
     private final CommentService commentService;
     private final PostMapper postMapper;
 
-    public PostServiceImpl(PostRepository postRepository, CommentService commentService,PostMapper postMapper) {
+    public PostServiceImpl(PostRepository postRepository, CommentService commentService, PostMapper postMapper) {
         this.postRepository = postRepository;
         this.commentService = commentService;
         this.postMapper = postMapper;
@@ -39,7 +39,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void save(PostDTO post) {
-        postRepository.save(new Post(null, post.title(), post.text(), post.imageUrl(), 0, ""));
+        postRepository.save(new Post(null, post.title(), post.text(), post.imageUrl(), 0, post.tags()));
     }
 
     @Override
@@ -68,12 +68,14 @@ public class PostServiceImpl implements PostService {
         postRepository.findById(id).ifPresentOrElse(
                 post -> {
                     if (decision) {
-                        postRepository.updateLikesCount(id, true);
+                        post.setLikes(post.getLikes() + 1);
                     } else if (post.getLikes() > 0) {
-                        postRepository.updateLikesCount(id, false);
+                        post.setLikes(post.getLikes() - 1);
                     }
+                    postRepository.save(post);
                 },
                 () -> {
+                    throw new RuntimeException("Not found post with id: " + id);
                 }
         );
     }
@@ -85,7 +87,7 @@ public class PostServiceImpl implements PostService {
         if (tag.isEmpty()) {
             posts = postRepository.findAll();
         } else {
-            posts = postRepository.findAll();///by tag
+            posts = postRepository.findAllByTagsContaining(tag);
         }
         List<PostWithCommentsDTO> postWithCommentsDTOS = new ArrayList<>();
         posts.forEach(post -> {

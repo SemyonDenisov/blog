@@ -9,6 +9,7 @@ import ru.parcticum.yandex.paging.Paging;
 
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findAll();
@@ -17,9 +18,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     Optional<Post> findById(int id);
 
-    @Query(value = "update posts set likes= likes + 1 where id=?",nativeQuery = true)
-    void updateLikesCount(int id, boolean decision);
 
+    List<Post> findAllByTagsContaining(String tag);
     //List<Post> findAllByTagOfDefault(String tag,int pageSize,int pageNumber);
 
 //    Paging getPaging(String tag, int pageSize, int pageNumber);
