@@ -1,12 +1,15 @@
 package ru.parcticum.yandex.service.post;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.parcticum.yandex.DAO.post.PostRepository;
 import ru.parcticum.yandex.DTO.PostDTO;
 import ru.parcticum.yandex.DTO.PostWithCommentsDTO;
 import ru.parcticum.yandex.mapper.PostMapper;
 import ru.parcticum.yandex.model.Post;
+import ru.parcticum.yandex.paging.Paging;
 import ru.parcticum.yandex.service.comment.CommentService;
 
 import java.util.ArrayList;
@@ -83,11 +86,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostWithCommentsDTO> findAllByTagOfDefault(String tag, int pageSize, int pageNumber) {
         tag = tag.trim();
-        List<Post> posts;
+        Page<Post> posts;
         if (tag.isEmpty()) {
-            posts = postRepository.findAll();
+            posts = postRepository.findAll(PageRequest.of(pageNumber-1, pageSize));
         } else {
-            posts = postRepository.findAllByTagsContaining(tag);
+            posts = postRepository.findAllByTagsContaining(tag, PageRequest.of(pageNumber - 1, pageSize));
         }
         List<PostWithCommentsDTO> postWithCommentsDTOS = new ArrayList<>();
         posts.forEach(post -> {
@@ -96,8 +99,23 @@ public class PostServiceImpl implements PostService {
         return postWithCommentsDTOS;
         //return postRepository.findAllByTagOfDefault(tag,pageSize,pageNumber);
     }
-//    @Override
-//    public Paging getPaging(String tag, int pageSize, int pageNumber){
-//        return postRepository.getPaging(tag,pageSize,pageNumber);
-//    }
+
+
+    @Override
+    public Paging getPaging(String tag, int pageSize, int pageNumber) {
+        if (tag.trim().isEmpty()) {
+            return new Paging(
+                    pageSize,
+                    pageNumber,
+                    !postRepository.findAll(PageRequest.of(pageNumber, pageSize)).isEmpty(),
+                    pageNumber!=1
+            );
+        }
+        return new Paging(
+                pageSize,
+                pageNumber,
+                !postRepository.findAllByTagsContaining(tag, PageRequest.of(pageNumber, pageSize)).isEmpty(),
+                pageNumber!=1
+        );
+    }
 }

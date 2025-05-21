@@ -1,5 +1,8 @@
 package ru.parcticum.yandex.DAO.post;
 
+import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -12,14 +15,15 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
-    List<Post> findAll();
+    @NonNull
+    Page<Post> findAll(@NonNull Pageable pageable);
 
     void deleteById(int id);
 
     Optional<Post> findById(int id);
 
 
-    List<Post> findAllByTagsContaining(String tag);
+    Page<Post> findAllByTagsContaining(String tag,Pageable pageable);
     //List<Post> findAllByTagOfDefault(String tag,int pageSize,int pageNumber);
 
 //    Paging getPaging(String tag, int pageSize, int pageNumber);

@@ -107,7 +107,7 @@ public class PostController {
     ) {
         search = search.trim();
         List<PostWithCommentsDTO> posts = postService.findAllByTagOfDefault(search.trim(), pageSize, pageNumber);
-        Paging paging = new Paging(0, 10, true, true);//postService.getPaging(search, pageSize, pageNumber);
+        Paging paging = postService.getPaging(search,pageSize,pageNumber);
         model.addAttribute("posts", posts);
         model.addAttribute("search", search);
         model.addAttribute("paging", paging);

@@ -3,6 +3,7 @@ package ru.parcticum.yandex.service.post;
 import ru.parcticum.yandex.DTO.PostDTO;
 import ru.parcticum.yandex.DTO.PostWithCommentsDTO;
 import ru.parcticum.yandex.model.Post;
+import ru.parcticum.yandex.paging.Paging;
 
 import java.util.List;
 
@@ -21,5 +22,5 @@ public interface PostService {
     void editPost(Post post);
     List<PostWithCommentsDTO> findAllByTagOfDefault(String tag, int skip, int limit);
 
-//    Paging getPaging(String tag, int pageSize, int pageNumber);
+    Paging getPaging(String tag, int pageSize, int pageNumber);
 }
