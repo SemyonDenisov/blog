@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.parcticum.yandex.DTO.PostWithCommentsDTO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,4 +34,12 @@ public class Post {
     @Setter
     private String tags;
 
+    public Post(PostWithCommentsDTO postWithCommentsDTO){
+        this.id = postWithCommentsDTO.getId();
+        this.title = postWithCommentsDTO.getTitle();
+        this.text = postWithCommentsDTO.getText();
+        this.imageUrl = postWithCommentsDTO.getImageUrl();
+        this.likes = postWithCommentsDTO.getLikes();
+        this.tags = postWithCommentsDTO.getTags();
+    }
 }

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.parcticum.yandex.DAO.post.PostRepository;
 import ru.parcticum.yandex.DTO.PostDTO;
 import ru.parcticum.yandex.DTO.PostWithCommentsDTO;
-import ru.parcticum.yandex.mapper.PostMapper;
 import ru.parcticum.yandex.model.Post;
 import ru.parcticum.yandex.paging.Paging;
 import ru.parcticum.yandex.service.comment.CommentService;
@@ -21,12 +20,10 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final CommentService commentService;
-    private final PostMapper postMapper;
 
-    public PostServiceImpl(PostRepository postRepository, CommentService commentService, PostMapper postMapper) {
+    public PostServiceImpl(PostRepository postRepository, CommentService commentService) {
         this.postRepository = postRepository;
         this.commentService = commentService;
-        this.postMapper = postMapper;
     }
 
     @Override

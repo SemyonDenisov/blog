@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.parcticum.yandex.DTO.PostDTO;
 import ru.parcticum.yandex.DTO.PostWithCommentsDTO;
-import ru.parcticum.yandex.mapper.PostMapper;
 import ru.parcticum.yandex.model.Post;
 import ru.parcticum.yandex.paging.Paging;
 import ru.parcticum.yandex.service.comment.CommentService;
@@ -29,7 +28,6 @@ public class PostController {
 
     private final PostService postService;
     private final CommentService commentService;
-    private final PostMapper postMapper;
 
     @Value("${spring.image.savePath}")
     private String imageSavePath;
@@ -41,7 +39,7 @@ public class PostController {
                            @RequestPart(name = "text") String text,
                            @RequestPart(name = "image", required = false) MultipartFile image,
                            @RequestPart(name = "tags") String tags) {
-        Post post = postMapper.mapPostWithCommentsToPost(postService.findById(id));
+        Post post = new Post(postService.findById(id));
         post.setTitle(title);
         post.setText(text);
         post.setTags(tags);
@@ -74,7 +72,7 @@ public class PostController {
     @GetMapping(value = "/images/{id}")
     public @ResponseBody byte[] getImage(@PathVariable(name = "id") Integer id) {
         try {
-            Post post = postMapper.mapPostWithCommentsToPost(postService.findById(id));
+            Post post = new Post(postService.findById(id));
             return Files.readAllBytes(Path.of(post.getImageUrl()));
         } catch (Exception ignored) {
         }
@@ -107,7 +105,7 @@ public class PostController {
     ) {
         search = search.trim();
         List<PostWithCommentsDTO> posts = postService.findAllByTagOfDefault(search.trim(), pageSize, pageNumber);
-        Paging paging = postService.getPaging(search,pageSize,pageNumber);
+        Paging paging = postService.getPaging(search, pageSize, pageNumber);
         model.addAttribute("posts", posts);
         model.addAttribute("search", search);
         model.addAttribute("paging", paging);
