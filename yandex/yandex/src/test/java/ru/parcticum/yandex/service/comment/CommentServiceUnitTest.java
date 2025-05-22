@@ -13,8 +13,8 @@ import ru.parcticum.yandex.model.Comment;
 import static org.mockito.Mockito.*;
 
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {})
+
+@SpringBootTest
 public class CommentServiceUnitTest {
 
     @MockitoBean
