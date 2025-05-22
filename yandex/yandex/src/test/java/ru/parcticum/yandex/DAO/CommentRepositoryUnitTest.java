@@ -1,4 +1,4 @@
-package ru.parcticum.yandex.service.DAO;
+package ru.parcticum.yandex.DAO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
