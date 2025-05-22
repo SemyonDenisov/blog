@@ -6,8 +6,7 @@
 4) ./gradlew bootJar
 5) cd build\libs
 6) для Linux: ./yandex-0.0.1-SNAPSHOT.jar для Windows java -jar yandex-0.0.1-SNAPSHOT.jar
-7) Адрес приложения: http://localhost:8080/Blog 
-   Приложение работает только на порту, указанному в теге base каждого файла в templates (проблема связана с ThymeLeaf)
+7) Адрес приложения: http://localhost:8080/
 8) Для повторного запуска и корректного отображения картинок, в случае 
 редактирования постов: скопировать содержимое из папки storage_start_state в storage
 
